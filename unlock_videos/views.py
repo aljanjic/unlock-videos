@@ -35,6 +35,4 @@ def file(request, file_id):
     serializer = MediaFileSerializer(data)
     return Response({'file' : serializer.data})
 
-# def uploadMedia(request):
-#     pass
     
