@@ -8,4 +8,4 @@ class MediaFile(models.Model):
     size = models.IntegerField()
     upload_timestamp = models.DateTimeField(auto_now_add=True)
     transcript = models.TextField(blank=True)
-    # file = models.FileField()
+    file = models.FileField(null=True)
