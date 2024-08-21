@@ -21,5 +21,6 @@ from unlock_videos import views
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', views.home, name='home'),
-    path('api/mediafiles', views.mediafiles, name='mediafiles'),
+    path('api/files', views.files, name='files'),
+    path('api/files/<int:file_id>', views.file, name='file'),
 ]
