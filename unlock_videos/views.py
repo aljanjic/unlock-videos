@@ -53,3 +53,21 @@ def file(request, file_id):
     elif request.method == 'DELETE':
         data.delete()
         return Response(status=status.HTTP_204_NO_CONTENT) 
+    
+@api_view(['POST'])
+def register(request):
+    serializer = UserSerializer(data=request.data)
+    if serializer.is_valid():
+        serializer.save()
+        return Response(status=status.HTTP_201_CREATED)
+
+
+def transcribe(request, file_id):
+    try:
+        audio_file = MediaFile.objects.get(pk = file_id)
+    except MediaFile.DoesNotExist:
+        return Response(status=status.HTTP_404_NOT_FOUND)
+       
+    audio_file_location = audio_file.file.path
+    model = whisper.load_model('base')
+    
