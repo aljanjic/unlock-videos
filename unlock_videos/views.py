@@ -61,28 +61,13 @@ def register(request):
     if serializer.is_valid():
         serializer.save()
         return Response(status=status.HTTP_201_CREATED)
-
-# @api_view(['POST'])
-# def transcribe(request, file_id):
-#     try:
-#         audio_file = MediaFile.objects.get(pk = file_id)
-#     except MediaFile.DoesNotExist:
-#         return Response(status=status.HTTP_404_NOT_FOUND)
-       
-#     audio_file_location = audio_file.file.path
-#     model = whisper.load_model('base')
-#     result = model.transcribe(audio_file_location)
-
-#     audio_file.transcript = result['text']
-#     audio_file.save()
-    
+   
 @api_view(['POST'])
 def transcribe(request, file_id):
-    # Fetch the MediaFile object, or return a 404 error if not found
     audio_file = get_object_or_404(MediaFile, pk=file_id)
 
     if not audio_file.file:
-        return Response({"error": "No file associated with this MediaFile."}, status=status.HTTP_400_BAD_REQUEST)
+        return Response({"error": "No file ID associated with this MediaFile."}, status=status.HTTP_400_BAD_REQUEST)
     
     try:
         result = whisper_model.transcribe(audio_file.file.path)
