@@ -1,3 +1,4 @@
+import os
 from django.shortcuts import redirect, render, get_object_or_404
 from django.http import HttpResponse, JsonResponse
 
@@ -8,7 +9,9 @@ from rest_framework.permissions import IsAuthenticated
 
 from .models import MediaFile
 from .serializers import MediaFileSerializer, UserSerializer
+from django.conf import settings
 
+from .utils import extract_audio_from_video
 from .whisper_utils import whisper_model
 
 def index(request):
@@ -64,17 +67,31 @@ def register(request):
    
 @api_view(['POST'])
 def transcribe(request, file_id):
-    audio_file = get_object_or_404(MediaFile, pk=file_id)
+    media_file = get_object_or_404(MediaFile, pk=file_id)
 
-    if not audio_file.file:
+    if not media_file.file:
         return Response({"error": "No file ID associated with this MediaFile."}, status=status.HTTP_400_BAD_REQUEST)
     
+    if not media_file.file:
+        return Response({"error": "No file associated with this MediaFile."}, status=status.HTTP_400_BAD_REQUEST)
+    
+    if media_file.file_type == 'video':
+        audio_file_path = os.path.join(settings.MEDIA_ROOT, f"audio_{media_file.id}.wav")
+        try:
+            extract_audio_from_video(media_file.file.path, audio_file_path)
+        except Exception as e:
+            return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+    else:
+        audio_file_path = media_file.file.path
+
+
+
     try:
-        result = whisper_model.transcribe(audio_file.file.path)
+        result = whisper_model.transcribe(audio_file_path)
     except Exception as e:
         return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
     
-    audio_file.transcript = result['text']
-    audio_file.save()
+    media_file.transcript = result['text']
+    media_file.save()
     
-    return Response({"message": "Transcription successful", "transcript": audio_file.transcript}, status=status.HTTP_200_OK)
+    return Response({"message": "Transcription successful", "transcript": media_file.transcript}, status=status.HTTP_200_OK)
