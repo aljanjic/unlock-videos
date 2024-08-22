@@ -1,4 +1,4 @@
-from django.shortcuts import redirect, render
+from django.shortcuts import redirect, render, get_object_or_404
 from django.http import HttpResponse, JsonResponse
 
 from rest_framework.response import Response
@@ -7,8 +7,9 @@ from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated
 
 from .models import MediaFile
-from .serializers import MediaFileSerializer
+from .serializers import MediaFileSerializer, UserSerializer
 
+from .whisper_utils import whisper_model
 
 def index(request):
     return render(request, 'unlock_videos/index.html')
@@ -61,13 +62,34 @@ def register(request):
         serializer.save()
         return Response(status=status.HTTP_201_CREATED)
 
-
-def transcribe(request, file_id):
-    try:
-        audio_file = MediaFile.objects.get(pk = file_id)
-    except MediaFile.DoesNotExist:
-        return Response(status=status.HTTP_404_NOT_FOUND)
+# @api_view(['POST'])
+# def transcribe(request, file_id):
+#     try:
+#         audio_file = MediaFile.objects.get(pk = file_id)
+#     except MediaFile.DoesNotExist:
+#         return Response(status=status.HTTP_404_NOT_FOUND)
        
-    audio_file_location = audio_file.file.path
-    model = whisper.load_model('base')
+#     audio_file_location = audio_file.file.path
+#     model = whisper.load_model('base')
+#     result = model.transcribe(audio_file_location)
+
+#     audio_file.transcript = result['text']
+#     audio_file.save()
     
+@api_view(['POST'])
+def transcribe(request, file_id):
+    # Fetch the MediaFile object, or return a 404 error if not found
+    audio_file = get_object_or_404(MediaFile, pk=file_id)
+
+    if not audio_file.file:
+        return Response({"error": "No file associated with this MediaFile."}, status=status.HTTP_400_BAD_REQUEST)
+    
+    try:
+        result = whisper_model.transcribe(audio_file.file.path)
+    except Exception as e:
+        return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+    
+    audio_file.transcript = result['text']
+    audio_file.save()
+    
+    return Response({"message": "Transcription successful", "transcript": audio_file.transcript}, status=status.HTTP_200_OK)

@@ -9,3 +9,6 @@ class MediaFile(models.Model):
     upload_timestamp = models.DateTimeField(auto_now_add=True)
     transcript = models.TextField(blank=True)
     file = models.FileField(null=True)
+
+    def __str__(self) :
+        return self.file_name
