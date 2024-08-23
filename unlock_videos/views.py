@@ -84,8 +84,6 @@ def transcribe(request, file_id):
     else:
         audio_file_path = media_file.file.path
 
-
-
     try:
         result = whisper_model.transcribe(audio_file_path)
     except Exception as e:

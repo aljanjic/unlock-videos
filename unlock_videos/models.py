@@ -36,20 +36,23 @@ class MediaFile(models.Model):
             else:
                 raise ValueError(f"Unsupported file type: {extension}")
             
-            self.size = self.file.size
-            
-            if self.file_type == 'video':
-                try:
-                    video = VideoFileClip(self.file.path)
-                    self.length = timedelta(seconds=video.duration)  # Convert to timedelta
-                except Exception as e:
-                    raise ValueError(f"Unable to calculate video length: {str(e)}")
-            elif self.file_type == 'audio':
-                try:
-                    audio = AudioSegment.from_file(self.file.path)
-                    self.length = timedelta(seconds=audio.duration_seconds)  # Convert to timedelta
-                except Exception as e:
-                    raise ValueError(f"Unable to calculate audio length: {str(e)}")
+            self.size = round(self.file.size / (1024 * 1024), 2)  
+
+    # There was the issue that file is not 100% uploaded and this is executed, so separate this to after the file is uploaded, maybe after 
+    # serializer.save() to run this and above size check and fill out after the save is completed
+
+            # if self.file_type == 'video':
+            #     try:
+            #         video = VideoFileClip(self.file.path)
+            #         self.length = timedelta(seconds=video.duration)  # Convert to timedelta
+            #     except Exception as e:
+            #         raise ValueError(f"Unable to calculate video length: {str(e)}")
+            # elif self.file_type == 'audio':
+            #     try:
+            #         audio = AudioSegment.from_file(self.file.path)
+            #         self.length = timedelta(seconds=audio.duration_seconds)  # Convert to timedelta
+            #     except Exception as e:
+            #         raise ValueError(f"Unable to calculate audio length: {str(e)}")
 
 
         super(MediaFile, self).save(*args, **kwargs)
