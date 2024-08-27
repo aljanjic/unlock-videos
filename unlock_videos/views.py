@@ -24,7 +24,7 @@ def home(request):
 @permission_classes([IsAuthenticated])
 def files(request):
     if request.method == 'GET':
-        #data = MediaFile.objects.all()
+        # data = MediaFile.objects.all()
         data = request.user.media_files.all()
         serializer = MediaFileSerializer(data, many=True)
         return Response({'files' : serializer.data})
@@ -40,8 +40,9 @@ def files(request):
 @permission_classes([IsAuthenticated])
 def file(request, file_id):
     try:
-        data = request.user.media_files.get(pk=file_id)
-        #data = MediaFile.objects.get(pk=file_id)
+        # data = MediaFile.objects.get(pk=file_id)
+        # data = request.user.media_files.get(pk=file_id)
+        data = get_object_or_404(MediaFile, pk= file_id, user=request.user)
     except MediaFile.DoesNotExist:
         return Response(status=status.HTTP_404_NOT_FOUND)
     
@@ -63,13 +64,10 @@ def file(request, file_id):
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
 def transcribe(request, file_id):
-    media_file = get_object_or_404(MediaFile, pk=file_id)
+    media_file = get_object_or_404(MediaFile, pk=file_id, user=request.user) 
 
     if not media_file.file:
         return Response({"error": "No file ID associated with this MediaFile."}, status=status.HTTP_400_BAD_REQUEST)
-    
-    if not media_file.file:
-        return Response({"error": "No file associated with this MediaFile."}, status=status.HTTP_400_BAD_REQUEST)
     
     if media_file.file_type == 'video':
         audio_file_path = os.path.join(settings.MEDIA_ROOT, f"audio_{media_file.id}.wav")
@@ -85,6 +83,12 @@ def transcribe(request, file_id):
     except Exception as e:
         return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
     
+    # for i in range(0,len(result['segments'])):
+    #     print('############### Result: ',result['segments'][i]['start'])
+    #     print('############### Result: ',result['segments'][i]['end'])
+    #     print('############### Result: ',result['segments'][i]['text'])
+    #     print('------------------------------------')
+
     media_file.transcript = result['text']
     media_file.save()
     
