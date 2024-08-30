@@ -25,7 +25,7 @@ def home(request):
 def files(request):
     if request.method == 'GET':
         # data = MediaFile.objects.all()
-        data = request.user.media_files.all()
+        data = request.user.user.all()
         serializer = MediaFileSerializer(data, many=True)
         return Response({'files' : serializer.data})
     
@@ -41,7 +41,7 @@ def files(request):
 def file(request, file_id):
     try:
         # data = MediaFile.objects.get(pk=file_id)
-        # data = request.user.media_files.get(pk=file_id)
+        # data = request.user.user.get(pk=file_id)
         data = get_object_or_404(MediaFile, pk= file_id, user=request.user)
     except MediaFile.DoesNotExist:
         return Response(status=status.HTTP_404_NOT_FOUND)
