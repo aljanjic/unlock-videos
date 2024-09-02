@@ -1,6 +1,6 @@
 import os
-from django.shortcuts import redirect, render, get_object_or_404
-from django.http import HttpResponse, JsonResponse
+from django.shortcuts import render, get_object_or_404
+from django.http import HttpResponse
 
 from rest_framework.response import Response
 from rest_framework import status
@@ -25,12 +25,14 @@ def home(request):
 def files(request):
     if request.method == 'GET':
         data = MediaFile.objects.all()
-        #data = request.user.user.all()
+        print('######## Request:', request.user.media_owner.all())
+        #data = request.user.media_owner.all()
         serializer = MediaFileSerializer(data, many=True)
         return Response({'files' : serializer.data})
     
     elif request.method == 'POST':
         serializer = MediaFileSerializer(data=request.data, context={'request': request})
+        print('######## Request:', request.user)
         if serializer.is_valid():
             serializer.save(user=request.user)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
@@ -42,7 +44,7 @@ def file(request, file_id):
     try:
         data = MediaFile.objects.get(pk=file_id)
         #data = get_object_or_404(MediaFile, pk= file_id, user=request.user)
-        #data = request.user.user.get(pk=file_id)
+        #data = request.user.media_owner.get(pk=file_id)
     except MediaFile.DoesNotExist:
         return Response(status=status.HTTP_404_NOT_FOUND)
     

@@ -12,7 +12,7 @@ class MediaFile(models.Model):
         ('video', 'Video'),
     ]
 
-    user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, related_name='user')
+    user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, related_name='media_owner')
     file_name = models.CharField(max_length=1024)
     length = models.DurationField(blank=True, null=True)
     size = models.IntegerField(blank=True, null=True)
