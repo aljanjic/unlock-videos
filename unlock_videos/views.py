@@ -21,29 +21,27 @@ def home(request):
     return HttpResponse('Hello World')
 
 @api_view(['GET', 'POST'])
-#@permission_classes([IsAuthenticated])
+@permission_classes([IsAuthenticated])
 def files(request):
     if request.method == 'GET':
-        data = MediaFile.objects.all()
-        print('######## Request:', request.user.media_owner.all())
-        #data = request.user.media_owner.all()
+        data = request.user.media_owner.all()
+        #data = MediaFile.objects.all()
         serializer = MediaFileSerializer(data, many=True)
         return Response({'files' : serializer.data})
     
     elif request.method == 'POST':
         serializer = MediaFileSerializer(data=request.data, context={'request': request})
-        print('######## Request:', request.user)
         if serializer.is_valid():
             serializer.save(user=request.user)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 @api_view(['GET', 'DELETE', 'PATCH'])
-#@permission_classes([IsAuthenticated])
+@permission_classes([IsAuthenticated])
 def file(request, file_id):
     try:
-        data = MediaFile.objects.get(pk=file_id)
-        #data = get_object_or_404(MediaFile, pk= file_id, user=request.user)
+        data = get_object_or_404(MediaFile, pk= file_id, user=request.user)
+        #data = MediaFile.objects.get(pk=file_id)
         #data = request.user.media_owner.get(pk=file_id)
     except MediaFile.DoesNotExist:
         return Response(status=status.HTTP_404_NOT_FOUND)
@@ -64,10 +62,10 @@ def file(request, file_id):
         return Response(status=status.HTTP_204_NO_CONTENT) 
     
 @api_view(['POST'])
-#@permission_classes([IsAuthenticated])
+@permission_classes([IsAuthenticated])
 def transcribe(request, file_id):
-    media_file = MediaFile.objects.get(pk=file_id)
-    #media_file = get_object_or_404(MediaFile, pk=file_id, user=request.user) 
+    media_file = get_object_or_404(MediaFile, pk=file_id, user=request.user) 
+    # media_file = MediaFile.objects.get(pk=file_id)
 
     if not media_file.file:
         return Response({"error": "No file ID associated with this MediaFile."}, status=status.HTTP_400_BAD_REQUEST)
