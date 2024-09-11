@@ -18,6 +18,7 @@ class MediaFile(models.Model):
     size = models.IntegerField(blank=True, null=True)
     upload_timestamp = models.DateTimeField(auto_now_add=True)
     transcript = models.TextField(blank=True)
+    summary = models.TextField(blank=True)
     file = models.FileField(null=True)
     file_type = models.CharField(max_length=10, choices=FILE_TYPE_CHOICES, blank=True)
 

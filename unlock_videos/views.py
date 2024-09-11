@@ -11,7 +11,7 @@ from .models import MediaFile
 from .serializers import MediaFileSerializer, UserSerializer
 from django.conf import settings
 
-from .utils import extract_audio_from_video
+from .utils import extract_audio_from_video, create_summary_from_transcript
 from .whisper_utils import whisper_model
 
 def index(request):
@@ -21,7 +21,7 @@ def home(request):
     return HttpResponse('Hello World')
 
 @api_view(['GET', 'POST'])
-@permission_classes([IsAuthenticated])
+# @permission_classes([IsAuthenticated])
 def files(request):
     if request.method == 'GET':
         data = request.user.media_owner.all()
@@ -37,11 +37,11 @@ def files(request):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 @api_view(['GET', 'DELETE', 'PATCH'])
-@permission_classes([IsAuthenticated])
+# @permission_classes([IsAuthenticated])
 def file(request, file_id):
     try:
-        data = get_object_or_404(MediaFile, pk= file_id, user=request.user)
-        #data = MediaFile.objects.get(pk=file_id)
+        #data = get_object_or_404(MediaFile, pk=file_id, user=request.user)
+        data = MediaFile.objects.get(pk=file_id)
         #data = request.user.media_owner.get(pk=file_id)
     except MediaFile.DoesNotExist:
         return Response(status=status.HTTP_404_NOT_FOUND)
@@ -62,10 +62,10 @@ def file(request, file_id):
         return Response(status=status.HTTP_204_NO_CONTENT) 
     
 @api_view(['POST'])
-@permission_classes([IsAuthenticated])
+# @permission_classes([IsAuthenticated])
 def transcribe(request, file_id):
-    media_file = get_object_or_404(MediaFile, pk=file_id, user=request.user) 
-    # media_file = MediaFile.objects.get(pk=file_id)
+    #media_file = get_object_or_404(MediaFile, pk=file_id, user=request.user) 
+    media_file = MediaFile.objects.get(pk=file_id)
 
     if not media_file.file:
         return Response({"error": "No file ID associated with this MediaFile."}, status=status.HTTP_400_BAD_REQUEST)
@@ -94,6 +94,26 @@ def transcribe(request, file_id):
     media_file.save()
     
     return Response({"message": "Transcription successful", "transcript": media_file.transcript}, status=status.HTTP_200_OK)
+
+@api_view(['POST'])
+# @permission_classes([IsAuthenticated])
+def summary(request, file_id):
+
+    #media_file = get_object_or_404(MediaFile, pk=file_id, user=request.user)
+    media_file = MediaFile.objects.get(pk=file_id)
+    if not media_file.file:
+        return Response({"error": "No file ID associated with this MediaFile"}, status=status.HTTP_400_BAD_REQUEST)
+
+    try:
+        result = create_summary_from_transcript(media_file.transcript)
+    except Exception as e:
+        return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+    media_file.summary = result
+    media_file.save()
+
+    return Response({"message": "Summary successful", "transcript": media_file.summary}, status=status.HTTP_200_OK)
+
 
 @api_view(['POST'])
 def register(request):

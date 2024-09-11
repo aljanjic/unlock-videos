@@ -29,15 +29,15 @@ message = client.beta.threads.messages.create(
 )
 
 
-
-run = client.beta.threads.runs.create_and_poll(
-  thread_id=thread.id,
-  assistant_id=assistant.id,
-  instructions=f"Please address the user's question and provide an answer from the following transcript only: {transcript} Remember, use the transcript from the first message as your only source of information. It is important not to answer or provide any information that out side of transcript scope"
-)
-
-
 # Without the Stream
+
+# run = client.beta.threads.runs.create_and_poll(
+#   thread_id=thread.id,
+#   assistant_id=assistant.id,
+#   instructions=f"Please address the user's question and provide an answer from the following transcript only: {transcript} Remember, use the transcript from the first message as your only source of information. It is important not to answer or provide any information that out side of transcript scope"
+# )
+
+
 
 # if run.status == 'completed': 
 #   messages = client.beta.threads.messages.list(
@@ -52,6 +52,7 @@ run = client.beta.threads.runs.create_and_poll(
 #   print(run.status)
 
 
+# With streaming
 
 from typing_extensions import override
 from openai import AssistantEventHandler
