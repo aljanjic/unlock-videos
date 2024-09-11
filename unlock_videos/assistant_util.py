@@ -84,11 +84,14 @@ class EventHandler(AssistantEventHandler):
 # Then, we use the `stream` SDK helper 
 # with the `EventHandler` class to create the Run 
 # and stream the response.
- 
+print('Thread id: ', thread.id)
+print('Assistant id: ', assistant.id)
+
+
 with client.beta.threads.runs.stream(
   thread_id=thread.id,
   assistant_id=assistant.id,
-  instructions="Please address the user as Jane Doe. The user has a premium account.",
+  instructions="Please address the user's question and provide an answer from the following transcript only: {transcript} Remember, use the transcript from the first message as your only source of information. It is important not to answer or provide any information that out side of transcript scope",
   event_handler=EventHandler(),
 ) as stream:
   stream.until_done()
