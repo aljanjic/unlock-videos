@@ -1,6 +1,6 @@
 import os
 from django.shortcuts import render, get_object_or_404
-from django.http import HttpResponse
+from django.http import HttpResponse, FileResponse
 
 from rest_framework.response import Response
 from rest_framework import status
@@ -61,6 +61,22 @@ def file(request, file_id):
         data.delete()
         return Response(status=status.HTTP_204_NO_CONTENT) 
     
+def download_file(request, file_id):
+    try:
+        #data = get_object_or_404(MediaFile, pk=file_id, user=request.user)
+        data = MediaFile.objects.get(pk=file_id)
+    except MediaFile.DoesNotExist:
+        return Response(status=status.HTTP_404_NOT_FOUND)
+    file_path = data.file.path
+    try:
+        response = FileResponse(open(file_path, 'rb'))
+        response['Content-Disposition'] = f'attachment; filename="{data.file.name}"'
+        return response
+    except FileNotFoundError:
+        return Response(status=status.HTTP_404_NOT_FOUND)
+    
+        
+
 @api_view(['POST'])
 # @permission_classes([IsAuthenticated])
 def transcribe(request, file_id):

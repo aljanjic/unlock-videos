@@ -28,6 +28,7 @@ urlpatterns = [
     path('api/files/<int:file_id>/', views.file, name='file'),
     path('api/files/transcribe/<int:file_id>/', views.transcribe, name='transcribe'),
     path('api/files/summary/<int:file_id>/', views.summary, name='summary'),
+    path('api/files/download/<int:file_id>/', views.download_file, name='download'),
     path('api/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
     path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
     path('api/register/', views.register, name='register')
