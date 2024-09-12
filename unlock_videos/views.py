@@ -112,7 +112,7 @@ def summary(request, file_id):
     media_file.summary = result
     media_file.save()
 
-    return Response({"message": "Summary successful", "transcript": media_file.summary}, status=status.HTTP_200_OK)
+    return Response({"message": "Summary successful", "summary": media_file.summary}, status=status.HTTP_200_OK)
 
 
 @api_view(['POST'])

@@ -2,15 +2,15 @@ from openai import OpenAI
 
 client = OpenAI()
 
-thread_id_='thread_W5bB8IBwrIkW8Sa4QLZpfPXZ'
+thread_id_='thread_cJR1V9cgk4netR9fZZotxlFK'
 
 message = client.beta.threads.messages.create(
   thread_id= thread_id_,
   role="user",
-  content="What is the video about?"
+  content="What was the outcome?"
 )
 
-assistant_id_ = 'asst_24B20LUvAxUpdqtSQFlSTekb'
+assistant_id_ = 'asst_noQ5v4vgDhtkJrNVO8uGRgAd'
 
 run = client.beta.threads.runs.create_and_poll(
   thread_id= thread_id_,
