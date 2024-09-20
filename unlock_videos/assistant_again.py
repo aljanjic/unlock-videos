@@ -2,15 +2,15 @@ from openai import OpenAI
 
 client = OpenAI()
 
-thread_id_='thread_cJR1V9cgk4netR9fZZotxlFK'
+thread_id_='thread_kHnmwsBDGqrANlVqnnMB9ZvZ'
 
 message = client.beta.threads.messages.create(
   thread_id= thread_id_,
   role="user",
-  content="What was the outcome?"
+  content="When did the coup ocurred?"
 )
 
-assistant_id_ = 'asst_noQ5v4vgDhtkJrNVO8uGRgAd'
+assistant_id_ = 'asst_PPfYTrtwNevWRF56v2e559M4'
 
 run = client.beta.threads.runs.create_and_poll(
   thread_id= thread_id_,
