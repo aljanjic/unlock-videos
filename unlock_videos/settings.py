@@ -22,12 +22,13 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media/')
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = os.environ.get('SECRET_KEY')
+# SECRET_KEY = os.environ.get('SECRET_KEY')
+SECRET_KEY = 'tralallalal321'
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['0.0.0.0:8002', 'localhost']
 
 
 REST_FRAMEWORK = {
@@ -44,7 +45,8 @@ SIMPLE_JWT = {
     'UPDATE_LAST_LOGIN': False,
 
     'ALGORITHM': 'HS256',
-    'SIGNING_KEY': os.environ.get('SECRET_JWT'),
+    # 'SIGNING_KEY': os.environ.get('SECRET_JWT'),
+    'SIGNING_KEY': 'tralalallalal321dsa2',
     'VERIFYING_KEY': None,
     'AUDIENCE': None,
     'ISSUER': None,
