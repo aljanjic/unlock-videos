@@ -28,7 +28,7 @@ SECRET_KEY = 'tralallalal321'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['0.0.0.0:8002', 'localhost', 'aljanjic.com', 'http://aljanjic.com', 'https://aljanjic.com']
+ALLOWED_HOSTS = ['0.0.0.0:8002', 'localhost', 'aljanjic.com', 'http://aljanjic.com', 'https://aljanjic.com', 'www.aljanjic.com', '127.0.0.1']
 
 
 REST_FRAMEWORK = {
