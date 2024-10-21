@@ -102,8 +102,12 @@ MIDDLEWARE = [
 ]
 
 CORS_ALLOWED_ORIGINS = [
-    "http://localhost:3000", 
-    "http://aljanjic.com"
+    "http://localhost:3000",
+    "http://aljanjic.com",
+    "https://localhost:3000",
+    "https://aljanjic.com",
+    "http://127.0.0.1",
+    "https://127.0.0.1"
 ]
 
 
