@@ -108,6 +108,8 @@ CORS_ALLOWED_ORIGINS = [
     "https://aljanjic.com",
     "http://127.0.0.1",
     "https://127.0.0.1",
+    "http://api.aljanjic.com",
+    "https://api.aljanjic.com",
 
 ]
 
