@@ -32,7 +32,7 @@ SECRET_KEY = os.getenv('SECRET_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['0.0.0.0:8002', 'localhost', 'aljanjic.com', 'http://aljanjic.com', 'https://aljanjic.com', 'www.aljanjic.com', '127.0.0.1']
+ALLOWED_HOSTS = ['0.0.0.0:8002', 'localhost', 'aljanjic.com', 'http://aljanjic.com', 'https://aljanjic.com', 'www.aljanjic.com', '127.0.0.1', '109.199.121.60']
 
 
 REST_FRAMEWORK = {
@@ -107,7 +107,8 @@ CORS_ALLOWED_ORIGINS = [
     "https://localhost:3000",
     "https://aljanjic.com",
     "http://127.0.0.1",
-    "https://127.0.0.1"
+    "https://127.0.0.1",
+
 ]
 
 
