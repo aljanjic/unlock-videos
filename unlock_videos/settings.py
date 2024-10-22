@@ -30,7 +30,7 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media/')
 SECRET_KEY = os.getenv('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = os.getenv('DEBUG')
 
 ALLOWED_HOSTS = ['0.0.0.0:8002', 'localhost', 'aljanjic.com', 'http://aljanjic.com', 'https://aljanjic.com', 'www.aljanjic.com', '127.0.0.1', '109.199.121.60', 'https://www.api.aljanjic.com', 'https://api.aljanjic.com', 'www.api.aljanjic.com', 'api.aljanjic.com']
 
@@ -107,7 +107,7 @@ CORS_ALLOWED_ORIGINS = [
     "https://www.aljanjic.com"
 ]
 
-CORS_ALLOW_CREDENTIALS = True
+#CORS_ALLOW_CREDENTIALS = True
 
 ROOT_URLCONF = 'unlock_videos.urls'
 
