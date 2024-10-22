@@ -104,10 +104,7 @@ MIDDLEWARE = [
 CORS_ALLOWED_ORIGINS = [
     "http://aljanjic.com",
     "https://aljanjic.com",
-    "https://www.aljanjic.com",
-    "http://api.aljanjic.com",
-    "https://api.aljanjic.com",
-
+    "https://www.aljanjic.com"
 ]
 
 CORS_ALLOW_CREDENTIALS = True
