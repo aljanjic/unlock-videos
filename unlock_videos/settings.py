@@ -104,7 +104,8 @@ MIDDLEWARE = [
 CORS_ALLOWED_ORIGINS = [
     "http://aljanjic.com",
     "https://aljanjic.com",
-    "https://www.aljanjic.com"
+    "https://www.aljanjic.com",
+    "http://localhost:3000"
 ]
 
 #CORS_ALLOW_CREDENTIALS = True
