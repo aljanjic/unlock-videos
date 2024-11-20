@@ -1,7 +1,9 @@
 import os
+import json
+from time import sleep
+
 from django.shortcuts import render, get_object_or_404
 from django.http import HttpResponse, FileResponse
-
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.decorators import api_view, permission_classes
@@ -11,8 +13,12 @@ from .models import MediaFile
 from .serializers import MediaFileSerializer, UserSerializer
 from django.conf import settings
 
-from .utils import extract_audio_from_video, create_summary_from_transcript
+from openai import OpenAI
+from .utils import extract_audio_from_video, create_summary_from_transcript, create_assistant
 from .whisper_utils import whisper_model
+
+
+client = OpenAI()
 
 def index(request):
     return render(request, 'unlock_videos/index.html')
@@ -123,7 +129,7 @@ def summary(request, file_id):
         return Response({"error": "No file ID associated with this MediaFile"}, status=status.HTTP_400_BAD_REQUEST)
 
     try:
-        result = create_summary_from_transcript(media_file.transcript)
+        result = create_summary_from_transcript(media_file.transcript, client)
     except Exception as e:
         return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
@@ -141,3 +147,45 @@ def register(request):
         return Response({'message': 'User created successfully.'}, status=status.HTTP_201_CREATED)
 
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+assistant_id = create_assistant(client)
+
+@api_view(['GET'])
+def start_conversation(request):
+    """Start a new conversation."""
+    if request.method == "GET":
+        thread = client.beta.threads.create()
+        return Response({"thread_id": thread.id})
+    return Response({"error": "Invalid HTTP method"}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
+
+
+def chat(request):
+    """Handle chat interactions."""
+    if request.method == "POST":
+        data = json.loads(request.body)
+        thread_id = data.get('thread_id')
+        user_input = data.get('message', '')
+
+        if not thread_id:
+            return Response({"error": "Missing thread_id"}, status=status.HTTP_400_BAD_REQUEST)
+
+        # Add the user's message to the thread
+        client.beta.threads.messages.create(thread_id=thread_id, role="user", content=user_input)
+
+        # Run the assistant
+        run = client.beta.threads.runs.create(thread_id=thread_id, assistant_id=assistant_id)
+
+        # Check for completion
+        while True:
+            run_status = client.beta.threads.runs.retrieve(thread_id=thread_id, run_id=run.id)
+            if run_status.status == 'completed':
+                break
+            sleep(1)
+
+        # Retrieve the assistant's response
+        messages = client.beta.threads.messages.list(thread_id=thread_id)
+        response = messages.data[0].content[0].text.value
+
+        return Response({"response": response})
+    return Response({"error": "Invalid HTTP method"}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
