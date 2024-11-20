@@ -7,6 +7,7 @@ from django.http import HttpResponse, FileResponse
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.decorators import api_view, permission_classes
+from django.views.decorators.csrf import csrf_exempt
 from rest_framework.permissions import IsAuthenticated
 
 from .models import MediaFile
@@ -151,6 +152,7 @@ def register(request):
 
 assistant_id = create_assistant(client)
 
+@csrf_exempt
 @api_view(['GET'])
 def start_conversation(request):
     """Start a new conversation."""
@@ -160,6 +162,7 @@ def start_conversation(request):
     return Response({"error": "Invalid HTTP method"}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
 
 @api_view
+@csrf_exempt
 def chat(request):
     """Handle chat interactions."""
     if request.method == "POST":
