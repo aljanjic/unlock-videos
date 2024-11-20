@@ -159,7 +159,7 @@ def start_conversation(request):
         return Response({"thread_id": thread.id})
     return Response({"error": "Invalid HTTP method"}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
 
-
+@api_view
 def chat(request):
     """Handle chat interactions."""
     if request.method == "POST":
