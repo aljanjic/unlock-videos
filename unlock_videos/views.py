@@ -162,7 +162,6 @@ def start_conversation(request):
 
 @api_view(['POST'])
 def chat(request):
-    client_two = OpenAI()
     """Handle chat interactions."""
     if request.method == "POST":
         data = json.loads(request.body)
@@ -173,14 +172,14 @@ def chat(request):
             return Response({"error": "Missing thread_id"}, status=status.HTTP_400_BAD_REQUEST)
 
         # Add the user's message to the thread
-        client_two.beta.threads.messages.create(thread_id=thread_id, role="user", content=user_input)
+        client.beta.threads.messages.create(thread_id=thread_id, role="user", content=user_input)
 
         # Run the assistant
-        run = client_two.beta.threads.runs.create(thread_id=thread_id, assistant_id=assistant_id)
+        run = client.beta.threads.runs.create(thread_id=thread_id, assistant_id=assistant_id)
 
         # Check for completion
         while True:
-            run_status = client_two.beta.threads.runs.retrieve(thread_id=thread_id, run_id=run.id)
+            run_status = client.beta.threads.runs.retrieve(thread_id=thread_id, run_id=run.id)
             if run_status.status == 'completed':
                 break
             sleep(1)
