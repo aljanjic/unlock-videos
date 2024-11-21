@@ -152,7 +152,6 @@ def register(request):
 
 assistant_id = create_assistant(client)
 
-@csrf_exempt
 @api_view(['GET'])
 def start_conversation(request):
     """Start a new conversation."""
@@ -162,7 +161,6 @@ def start_conversation(request):
     return Response({"error": "Invalid HTTP method"}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
 
 @api_view(['POST'])
-@csrf_exempt
 def chat(request):
     client_two = OpenAI()
     """Handle chat interactions."""
