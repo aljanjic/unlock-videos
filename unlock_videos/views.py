@@ -161,7 +161,7 @@ def start_conversation(request):
         return Response({"thread_id": thread.id})
     return Response({"error": "Invalid HTTP method"}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
 
-@api_view
+@api_view(['POST'])
 @csrf_exempt
 def chat(request):
     client_two = OpenAI()
