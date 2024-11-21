@@ -18,13 +18,11 @@ def create_summary_from_transcript(transcript, client):
 
         assistant = client.beta.assistants.create(
             name="Audio and Video file transcript interpreter",
-            instructions="""
-You are an Audio an Video file transcript interpreter. \
+            instructions="""You are an Audio an Video file transcript interpreter. \
 You will be provided with a transcript and you will be answering user questions and drawing the conclusions only from the provided transcript, \
 DO NOT use any other external knowledge beside provided transcript. \
 Do not ask to be provided with more information. In situations when the \
-question is not related to transcript answer: 'Unfortunately, that information is not included in transcript'
-            """,
+question is not related to transcript answer: 'Unfortunately, that information is not included in transcript'""",
             tools=[],
             model="gpt-4o-mini",
         )
@@ -84,13 +82,11 @@ def create_assistant(client):
   
     assistant = client.beta.assistants.create(
                 name="Audio and Video file transcript interpreter",
-                instructions="""
-                You are an Audio an Video file transcript interpreter. \
-                You will be provided with a transcript and you will be answering user questions only from the provided transcript, \
-                DO NOT use any other external knowledge beside provided transcript. \
-                Do not ask to be provided with more information. In situations when the \
-                question is not related to transcript answer: 'Unfortunately, that information is not included in transcript' \
-                """,
+            instructions="""You are an Audio an Video file transcript interpreter. \
+You will be provided with a transcript and you will be answering user questions and drawing the conclusions only from the provided transcript, \
+DO NOT use any other external knowledge beside provided transcript. \
+Do not ask to be provided with more information. In situations when the \
+question is not related to transcript answer: 'Unfortunately, that information is not included in transcript'""",
                 model="gpt-4o-mini",
                 tools=[
                   {
