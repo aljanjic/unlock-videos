@@ -21,6 +21,11 @@ from .whisper_utils import whisper_model
 
 client = OpenAI()
 
+## Ovo ce da ispunjava def file kada se otvori
+threadID = ''
+
+transcript = ''
+
 def index(request):
     return render(request, 'unlock_videos/index.html')
 
@@ -174,8 +179,10 @@ def chat(request):
         # Add the user's message to the thread
         client.beta.threads.messages.create(thread_id=thread_id, role="user", content=user_input)
 
-        # Run the assistant
-        run = client.beta.threads.runs.create(thread_id=thread_id, assistant_id=assistant_id)
+        # Run the assistant # Mozda i ovo ubaciti kao parametar : instructions=f"Please address the user's question and provide an answer from the following transcript only: {transcript} Remember, use the transcript from the first message as your only source of information. It is important not to answer or provide any information that out side of transcript scope"
+
+        run = client.beta.threads.runs.create(thread_id=thread_id, assistant_id=assistant_id) 
+
 
         # Check for completion
         while True:
