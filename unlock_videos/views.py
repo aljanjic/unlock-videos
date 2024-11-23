@@ -21,9 +21,10 @@ from .whisper_utils import whisper_model
 
 client = OpenAI()
 
-## Ovo ce da ispunjava def file kada se otvori
+## Ovo ce da ispunjava def file kada se otvori, ili mozda start_chat ovo isto moze da se pobrine za transcript kad vec ionako pravi novi threadI, ali mu file mora obezbijediti pk
+#  data = get_object_or_404(MediaFile, pk=file_id, user=request.user)
 threadID = ''
-
+pk = ''
 transcript = ''
 
 def index(request):
@@ -180,7 +181,7 @@ def chat(request):
         client.beta.threads.messages.create(thread_id=thread_id, role="user", content=user_input)
 
         # Run the assistant # Mozda i ovo ubaciti kao parametar : instructions=f"Please address the user's question and provide an answer from the following transcript only: {transcript} Remember, use the transcript from the first message as your only source of information. It is important not to answer or provide any information that out side of transcript scope"
-
+        # salje se transcript samo prvi put, nakon toga bez transcripta jer se trose tokeni
         run = client.beta.threads.runs.create(thread_id=thread_id, assistant_id=assistant_id) 
 
 
