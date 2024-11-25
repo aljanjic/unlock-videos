@@ -54,6 +54,7 @@ def files(request):
 def file(request, file_id):
     try:
         data = get_object_or_404(MediaFile, pk=file_id, user=request.user)
+        request.session['transcript'] = data.transcript
         #data = MediaFile.objects.get(pk=file_id)
         #data = request.user.media_owner.get(pk=file_id)
     except MediaFile.DoesNotExist:
@@ -156,7 +157,8 @@ def register(request):
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-assistant_id = create_assistant(client)
+#assistant_id = create_assistant(client)
+assistant_id = 'asst_A9w4GjniGj2Q1c4SSrmEhERg'
 
 @api_view(['GET'])
 def start_conversation(request):
@@ -173,7 +175,7 @@ def chat(request):
         data = json.loads(request.body)
         thread_id = data.get('thread_id')
         user_input = data.get('message', '')
-
+        transcript = request.session.get('transcript')
         if not thread_id:
             return Response({"error": "Missing thread_id"}, status=status.HTTP_400_BAD_REQUEST)
 
@@ -182,7 +184,13 @@ def chat(request):
 
         # Run the assistant # Mozda i ovo ubaciti kao parametar : instructions=f"Please address the user's question and provide an answer from the following transcript only: {transcript} Remember, use the transcript from the first message as your only source of information. It is important not to answer or provide any information that out side of transcript scope"
         # salje se transcript samo prvi put, nakon toga bez transcripta jer se trose tokeni
-        run = client.beta.threads.runs.create(thread_id=thread_id, assistant_id=assistant_id) 
+        run = client.beta.threads.runs.create(
+                thread_id=thread_id, 
+                assistant_id=assistant_id,
+#                instructions=f"Please address the user's question and provide an answer from the following transcript only: ```Grass is green, sky is blue, sun is yellow, birds fly``` Remember, use the transcript from this message as your only source of information. It is important not to answer or provide any information that out side of transcript scope"        
+                instructions=f"Please address the user's question and provide an answer from the following transcript only: ```{transcript}``` Remember, use the transcript from this message as your only source of information. It is important not to answer or provide any information that out side of transcript scope"
+
+                ) 
 
 
         # Check for completion
