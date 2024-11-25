@@ -1,7 +1,6 @@
 import os
 import json
 from time import sleep
-from dotenv import load_dotenv
 
 from django.shortcuts import render, get_object_or_404
 from django.http import HttpResponse, FileResponse
@@ -21,14 +20,12 @@ from .whisper_utils import whisper_model
 
 
 client = OpenAI()
-load_dotenv()
-
 
 ## Ovo ce da ispunjava def file kada se otvori, ili mozda start_chat ovo isto moze da se pobrine za transcript kad vec ionako pravi novi threadI, ali mu file mora obezbijediti pk
 #  data = get_object_or_404(MediaFile, pk=file_id, user=request.user)
-# threadID = ''
-# pk = ''
-# transcript = ''
+threadID = ''
+pk = ''
+transcript = ''
 
 def index(request):
     return render(request, 'unlock_videos/index.html')
@@ -64,7 +61,6 @@ def file(request, file_id):
     
     if request.method == 'GET':
         serializer = MediaFileSerializer(data)
-        request.session['transcript'] = data.transcript
         return Response({'file' : serializer.data})
     
     if request.method == 'PATCH':
@@ -159,24 +155,21 @@ def register(request):
 
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-# assistant_id = create_assistant(client)
-assistant_id = os.getenv('ASSISTANT_ID')
+
+assistant_id = create_assistant(client)
 
 @api_view(['GET'])
 def start_conversation(request):
     """Start a new conversation."""
     if request.method == "GET":
         thread = client.beta.threads.create()
-        # thread_id = shared_things.get('threadID')        
         return Response({"thread_id": thread.id})
-        # return Response({"thread_id": thread_id})
     return Response({"error": "Invalid HTTP method"}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
 
 @api_view(['POST'])
 def chat(request):
     """Handle chat interactions."""
     if request.method == "POST":
-        transcript = request.session['transcript']
         data = json.loads(request.body)
         thread_id = data.get('thread_id')
         user_input = data.get('message', '')
@@ -185,21 +178,11 @@ def chat(request):
             return Response({"error": "Missing thread_id"}, status=status.HTTP_400_BAD_REQUEST)
 
         # Add the user's message to the thread
-        message = client.beta.threads.messages.create(thread_id=thread_id, role="user", content=user_input)
+        client.beta.threads.messages.create(thread_id=thread_id, role="user", content=user_input)
 
         # Run the assistant # Mozda i ovo ubaciti kao parametar : instructions=f"Please address the user's question and provide an answer from the following transcript only: {transcript} Remember, use the transcript from the first message as your only source of information. It is important not to answer or provide any information that out side of transcript scope"
         # salje se transcript samo prvi put, nakon toga bez transcripta jer se trose tokeni
-        # run = client.beta.threads.runs.create_and_poll(
-        #     thread_id=thread_id, 
-        #     assistant_id=assistant_id,
-        #     instructions=f"Please address the user's question and provide an answer from the following transcript only: ```Grass is green, sky is blue, sun is yellow, birds fly``` Remember, use the transcript from this message as your only source of information. It is important not to answer or provide any information that out side of transcript scope"     
-        # ) 
-        run = client.beta.threads.runs.create(
-            thread_id=thread_id,
-            assistant_id=assistant_id,
-            instructions=f"Please address the user's question and provide an answer from the following transcript only: ```Grass is green, sky is blue, sun is yellow, birds fly``` Remember, use the transcript from this message as your only source of information. It is important not to answer or provide any information that out side of transcript scope"        
-            )
-
+        run = client.beta.threads.runs.create(thread_id=thread_id, assistant_id=assistant_id) 
 
 
         # Check for completion
@@ -208,10 +191,6 @@ def chat(request):
             if run_status.status == 'completed':
                 break
             sleep(1)
-        # while True:
-        #     if run.status == 'completed':
-        #         break
-        #     sleep(1)
 
         # Retrieve the assistant's response
         messages = client.beta.threads.messages.list(thread_id=thread_id)
