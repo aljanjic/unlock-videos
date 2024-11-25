@@ -192,8 +192,8 @@ def chat(request):
         run = client.beta.threads.runs.create_and_poll(
             thread_id=thread_id, 
             assistant_id=assistant_id,
-            instructions=f"Please address the user's question and provide an answer from the following transcript only: ```{transcript}``` Remember, use the transcript from this message as your only source of information. It is important not to answer or provide any information that out side of transcript scope"     
-) 
+            instructions=f"Please address the user's question and provide an answer from the following transcript only: ```Grass is green, sky is blue, sun is yellow, birds fly``` Remember, use the transcript from this message as your only source of information. It is important not to answer or provide any information that out side of transcript scope"     
+        ) 
 
 
         # Check for completion
