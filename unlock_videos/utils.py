@@ -18,7 +18,7 @@ def create_summary_from_transcript(transcript, client):
 
         assistant = client.beta.assistants.create(
             name="Audio and Video file transcript interpreter",
-            instructions="""You are an Audio an Video file transcript interpreter. \
+            instructions="""You are an Audio and Video file transcript interpreter. \
 You will be provided with a transcript and you will be answering user questions and drawing the conclusions only from the provided transcript, \
 DO NOT use any other external knowledge beside provided transcript. \
 Do not ask to be provided with more information. In situations when the \
@@ -82,7 +82,7 @@ def create_assistant(client):
   
     assistant = client.beta.assistants.create(
                 name="Audio and Video file transcript interpreter",
-            instructions="""You are an Audio an Video file transcript interpreter. \
+            instructions="""You are an Audio and Video file transcript interpreter. \
 You will be provided with a transcript and you will be answering user questions and drawing the conclusions only from the provided transcript, \
 DO NOT use any other external knowledge beside provided transcript. \
 Do not ask to be provided with more information. In situations when the \
