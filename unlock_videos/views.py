@@ -64,7 +64,7 @@ def file(request, file_id):
     
     if request.method == 'GET':
         serializer = MediaFileSerializer(data)
-        request.session['shared_things'] = {"threadID": client.beta.threads.create(), "transcript": data.transcript}
+        request.session['transcript'] = data.transcript
         return Response({'file' : serializer.data})
     
     if request.method == 'PATCH':
@@ -166,18 +166,17 @@ assistant_id = os.getenv('ASSISTANT_ID')
 def start_conversation(request):
     """Start a new conversation."""
     if request.method == "GET":
-        # thread = client.beta.threads.create()
-        thread_id = shared_things.get('threadID')        
-        # return Response({"thread_id": thread.id})
-        return Response({"thread_id": thread_id})
+        thread = client.beta.threads.create()
+        # thread_id = shared_things.get('threadID')        
+        return Response({"thread_id": thread.id})
+        # return Response({"thread_id": thread_id})
     return Response({"error": "Invalid HTTP method"}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
 
 @api_view(['POST'])
 def chat(request):
     """Handle chat interactions."""
     if request.method == "POST":
-        shared_things = request.session.get('shared_things')
-        transcript = shared_things.get('transcript')
+        transcript = request.session['transcript']
         data = json.loads(request.body)
         thread_id = data.get('thread_id')
         user_input = data.get('message', '')
