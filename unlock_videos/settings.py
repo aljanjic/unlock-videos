@@ -34,7 +34,7 @@ SECRET_KEY = os.getenv('SECRET_KEY')
 DEBUG = False
 SESSION_ENGINE = 'django.contrib.sessions.backends.cached_db'  # Default: Database backend
 
-ALLOWED_HOSTS = ['0.0.0.0:8002', 'localhost', 'aljanjic.com', 'http://aljanjic.com', 'https://aljanjic.com', 'www.aljanjic.com', '127.0.0.1', '109.199.121.60', 'https://www.api.aljanjic.com', 'https://api.aljanjic.com', 'www.api.aljanjic.com', 'api.aljanjic.com']
+ALLOWED_HOSTS = ['0.0.0.0:8002', 'localhost', 'aljanjic.com', 'http://aljanjic.com', 'https://aljanjic.com', 'www.aljanjic.com', '127.0.0.1', '109.199.121.60', 'https://www.api.aljanjic.com', 'https://api.aljanjic.com', 'www.api.aljanjic.com', 'api.aljanjic.com', '37.27.205.184']
 
 
 REST_FRAMEWORK = {
