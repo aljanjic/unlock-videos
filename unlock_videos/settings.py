@@ -12,10 +12,7 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 import os
 from pathlib import Path
 from datetime import timedelta
-from dotenv import load_dotenv
-
-
-load_dotenv()
+from decouple import config
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -27,11 +24,14 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media/')
 
 # SECURITY WARNING: keep the secret key used in production secret!
 
-SECRET_KEY = os.getenv('SECRET_KEY')
+SECRET_KEY = config(
+    'SECRET_KEY', 
+    default="ytrkl!=!vxz*h1zoey*wj48x*q0#ss12h=+zh)kk^u7a1ln4=!"
+)
 
 # SECURITY WARNING: don't run with debug turned on in production!
-#DEBUG = os.getenv('DEBUG')
-DEBUG = False
+DEBUG = config('DEBUG', default=False, cast=bool)
+#DEBUG = False
 SESSION_ENGINE = 'django.contrib.sessions.backends.cached_db'  # Default: Database backend
 
 ALLOWED_HOSTS = ['0.0.0.0:8002', 'localhost', 'aljanjic.com', 'http://aljanjic.com', 'https://aljanjic.com', 'www.aljanjic.com', '127.0.0.1', '109.199.121.60', 'https://www.api.aljanjic.com', 'https://api.aljanjic.com', 'www.api.aljanjic.com', 'api.aljanjic.com', '37.27.205.184']
@@ -51,7 +51,7 @@ SIMPLE_JWT = {
     'UPDATE_LAST_LOGIN': False,
 
     'ALGORITHM': 'HS256',
-    'SIGNING_KEY': os.getenv('SECRET_JWT'),
+    'SIGNING_KEY': config('SECRET_JWT'),
     'VERIFYING_KEY': None,
     'AUDIENCE': None,
     'ISSUER': None,
