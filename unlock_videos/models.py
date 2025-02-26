@@ -2,7 +2,7 @@ from django.db import models
 from django.contrib.auth.models import User
 
 from pydub import AudioSegment
-from moviepy.editor import VideoFileClip
+from moviepy import VideoFileClip
 import os
 from datetime import timedelta
 
