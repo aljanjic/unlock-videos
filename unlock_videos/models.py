@@ -23,8 +23,8 @@ class MediaFile(models.Model):
     file_type = models.CharField(max_length=10, choices=FILE_TYPE_CHOICES, blank=True)
 
     def __str__(self):
-        return self.file_name
-    
+        return str(self.file_name)
+        
     def save(self, *args, **kwargs):
         if self.file:
 
@@ -36,7 +36,9 @@ class MediaFile(models.Model):
             else:
                 raise ValueError(f"Unsupported file type: {extension}")
             
-            self.size = round(self.file.size / (1024 * 1024), 2)  
+            super(MediaFile, self).save(*args, **kwargs)
+            if self.file:
+                self.size = round(self.file.size / (1024 * 1024), 2)
 
     # There was the issue that file is not 100% uploaded and this is executed, so separate this to after the file is uploaded, maybe after 
     # serializer.save() to run this and above size check and fill out after the save is completed

@@ -16,8 +16,13 @@ from decouple import config
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
-MEDIA_URL = '/media/'
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media/')
+
+MEDIA_ROOT = BASE_DIR / 'media'
+
+# Static files (CSS, JavaScript, Images)
+# https://docs.djangoproject.com/en/5.1/howto/static-files/
+
+STATIC_ROOT = BASE_DIR / 'static'
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
@@ -28,10 +33,17 @@ SECRET_KEY = config('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = config('DEBUG', default=False, cast=bool)
-#DEBUG = False
+if not DEBUG:
+    SECURE_SSL_REDIRECT = True
+    SESSION_COOKIE_SECURE = True
+    CSRF_COOKIE_SECURE = True
+    SECURE_HSTS_SECONDS = 3600
+    SECURE_HSTS_INCLUDE_SUBDOMAINS = True
+    SECURE_HSTS_PRELOAD = True
+
 SESSION_ENGINE = 'django.contrib.sessions.backends.cached_db'  # Default: Database backend
 
-ALLOWED_HOSTS = ['0.0.0.0:8002', 'localhost', 'aljanjic.com', 'http://aljanjic.com', 'https://aljanjic.com', 'www.aljanjic.com', '127.0.0.1', '109.199.121.60', 'https://www.api.aljanjic.com', 'https://api.aljanjic.com', 'www.api.aljanjic.com', 'api.aljanjic.com', '37.27.205.184']
+ALLOWED_HOSTS = ['0.0.0.0', '127.0.0.1', 'localhost', '109.199.121.60', '37.27.205.184', 'www.api.aljanjic.com', 'api.aljanjic.com']
 
 
 REST_FRAMEWORK = {
@@ -172,13 +184,24 @@ USE_I18N = True
 USE_TZ = True
 
 
-# Static files (CSS, JavaScript, Images)
-# https://docs.djangoproject.com/en/5.1/howto/static-files/
-
-STATIC_URL = 'static/'
-STATIC_ROOT = os.path.join(BASE_DIR, 'static/')
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'console': {
+            'class': 'logging.StreamHandler',
+        },
+    },
+    'root': {
+        'handlers': ['console'],
+        'level': 'WARNING',
+    },
+}
+
