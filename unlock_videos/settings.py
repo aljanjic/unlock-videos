@@ -41,6 +41,8 @@ if not DEBUG:
     SECURE_HSTS_INCLUDE_SUBDOMAINS = True
     SECURE_HSTS_PRELOAD = True
 
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+
 SESSION_ENGINE = 'django.contrib.sessions.backends.cached_db'  # Default: Database backend
 
 ALLOWED_HOSTS = ['0.0.0.0', '127.0.0.1', 'localhost', '109.199.121.60', '37.27.205.184', 'www.api.aljanjic.com', 'api.aljanjic.com']
@@ -113,10 +115,10 @@ MIDDLEWARE = [
 ]
 
 CORS_ALLOWED_ORIGINS = [
-    "http://aljanjic.com",
+    "http://localhost:3000",
     "https://aljanjic.com",
     "https://www.aljanjic.com",
-    "http://localhost:3000"
+    "https://api.aljanjic.com",
 ]
 
 #CORS_ALLOW_CREDENTIALS = True
