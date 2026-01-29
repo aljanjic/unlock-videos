@@ -20,7 +20,7 @@ End-to-end full-stack application that enables Q&A over video transcripts using 
 
 **Infrastructure:**
 - Docker deployment with Gunicorn
-- Self-hosted on $7/month Ubuntu VPS
+- Self-hosted on €8.36/month Ubuntu VPS
 
 **Core Features:**
 - User registration and JWT authentication
