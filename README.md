@@ -81,3 +81,7 @@ The application will be available at `http://localhost:8002`.
 
 ## Note on Code Quality
 This was built solo as a learning exercise, prioritizing experimentation over production best practices. I'm sharing it as requested to demonstrate end-to-end capability. Happy to discuss what I'd improve with proper team processes.
+
+## Related
+
+**Frontend:** [github.com/aljanjic/unlock-videos-frontend](https://github.com/aljanjic/unlock-videos-frontend)
