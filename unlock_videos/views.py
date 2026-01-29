@@ -167,7 +167,6 @@ def register(request):
 assistant_id = config('OPENAI_ASSISTANT_ID')
 
 @api_view(['GET'])
-@permission_classes([IsAuthenticated])
 def start_conversation(request):
     """Start a new conversation."""
     if request.method == "GET":
@@ -176,7 +175,6 @@ def start_conversation(request):
     return Response({"error": "Invalid HTTP method"}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
 
 @api_view(['POST'])
-@permission_classes([IsAuthenticated])
 def chat(request):
     """Handle chat interactions."""
     if request.method == "POST":
