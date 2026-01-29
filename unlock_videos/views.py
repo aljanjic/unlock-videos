@@ -58,8 +58,8 @@ def file(request, file_id):
         data = get_object_or_404(MediaFile, pk=file_id, user=request.user)
 #        request.session['transcript'] = data.transcript
 #        request.session['transcript'] = 'Fortuna plays for the cars and the flowers. Like the birds from the sky'
-        # unique_key = '7878'
-        unique_key = f'transcript_{request.user.id}_{file_id}'
+        unique_key = config('KEY')
+        #unique_key = f'transcript_{request.user.id}_{file_id}'
         cache.set(unique_key, data.transcript, timeout=3600)
         #data = MediaFile.objects.get(pk=file_id)
         #data = request.user.media_owner.get(pk=file_id)
@@ -164,9 +164,11 @@ def register(request):
 
 
 #assistant_id = create_assistant(client)
-assistant_id = config('OPENAI_ASSISTANT_ID')
+#assistant_id = 'asst_A9w4GjniGj2Q1c4SSrmEhERg'
+assistant_id=config('OPENAI_ASSISTANT_ID')
 
 @api_view(['GET'])
+#@permission_classes([IsAuthenticated])
 def start_conversation(request):
     """Start a new conversation."""
     if request.method == "GET":
@@ -175,6 +177,7 @@ def start_conversation(request):
     return Response({"error": "Invalid HTTP method"}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
 
 @api_view(['POST'])
+#@permission_classes([IsAuthenticated])
 def chat(request):
     """Handle chat interactions."""
     if request.method == "POST":
@@ -182,12 +185,12 @@ def chat(request):
         thread_id = data.get('thread_id')
         user_input = data.get('message', '')
 # #        transcript = request.session.get('transcript')
-#         unique_key = '7878'
-#         transcript = cache.get(unique_key)
-        file_id = request.data.get('file_id')
-        media_file = get_object_or_404(MediaFile, pk=file_id, user=request.user)
-        unique_key = f'transcript_{request.user.id}_{file_id}'
-        transcript = cache.get(unique_key) or media_file.transcript
+        unique_key = config('KEY')
+        transcript = cache.get(unique_key)
+#        file_id = request.data.get('file_id')
+#        media_file = get_object_or_404(MediaFile, pk=file_id, user=request.user)
+#        unique_key = f'transcript_{request.user.id}_{file_id}'
+#        transcript = cache.get(unique_key) or media_file.transcript
         if not thread_id:
             return Response({"error": "Missing thread_id"}, status=status.HTTP_400_BAD_REQUEST)
 

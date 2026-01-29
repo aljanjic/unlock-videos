@@ -6,6 +6,28 @@
 ## Overview
 End-to-end full-stack application that enables Q&A over video transcripts using RAG (Retrieval-Augmented Generation).
 
+## Quick Start
+
+```bash
+# Clone the repository
+git clone https://github.com/yourusername/unlock-videos.git
+cd unlock-videos
+
+# Set up environment variables
+cp .env.example .env
+# Edit .env with your OpenAI API key
+
+# Run with Docker
+docker-compose up --build
+
+# Or run locally
+pip install -r requirements.txt
+python manage.py migrate
+python manage.py runserver 8002
+```
+
+The application will be available at `http://localhost:8002`.
+
 ## Tech Stack
 
 **Backend:**
@@ -58,4 +80,4 @@ End-to-end full-stack application that enables Q&A over video transcripts using 
 - Code review process before merging to production
 
 ## Note on Code Quality
-This was built solo as a learning exercise, prioritizing experimentation over production best practices. I'm sharing it as requested to demonstrate end-to-end capability - happy to discuss what I'd improve with proper team processes.
+This was built solo as a learning exercise, prioritizing experimentation over production best practices. I'm sharing it as requested to demonstrate end-to-end capability. Happy to discuss what I'd improve with proper team processes.
