@@ -1,6 +1,5 @@
 import os
 import json
-from time import sleep
 
 from django.shortcuts import render, get_object_or_404
 from django.http import HttpResponse, FileResponse
@@ -15,7 +14,7 @@ from .serializers import MediaFileSerializer, UserSerializer
 from django.conf import settings
 
 from openai import OpenAI
-from .utils import extract_audio_from_video, create_summary_from_transcript, create_assistant
+from .utils import extract_audio_from_video, create_summary_from_transcript, TRANSCRIPT_INSTRUCTIONS
 from .whisper_utils import whisper_model
 
 from django.core.cache import cache
@@ -163,17 +162,13 @@ def register(request):
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-#assistant_id = create_assistant(client)
-#assistant_id = 'asst_A9w4GjniGj2Q1c4SSrmEhERg'
-assistant_id=config('OPENAI_ASSISTANT_ID')
-
 @api_view(['GET'])
 #@permission_classes([IsAuthenticated])
 def start_conversation(request):
     """Start a new conversation."""
     if request.method == "GET":
-        thread = client.beta.threads.create()
-        return Response({"thread_id": thread.id})
+        conversation = client.conversations.create()
+        return Response({"thread_id": conversation.id})
     return Response({"error": "Invalid HTTP method"}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
 
 @api_view(['POST'])
@@ -194,30 +189,17 @@ def chat(request):
         if not thread_id:
             return Response({"error": "Missing thread_id"}, status=status.HTTP_400_BAD_REQUEST)
 
-        # Add the user's message to the thread
-        client.beta.threads.messages.create(thread_id=thread_id, role="user", content=user_input)
+        # thread_id is an OpenAI conversation id; the conversation keeps the chat history.
+        # Instructions are not stored in the conversation, so the transcript is sent on every turn.
+        try:
+            response = client.responses.create(
+                model=settings.OPENAI_MODEL,
+                conversation=thread_id,
+                instructions=f"{TRANSCRIPT_INSTRUCTIONS}\n\nTranscript:\n'{transcript}'",
+                input=user_input,
+            )
+        except Exception as e:
+            return Response({"error": str(e)}, status=status.HTTP_502_BAD_GATEWAY)
 
-        # Run the assistant # Mozda i ovo ubaciti kao parametar : instructions=f"Please address the user's question and provide an answer from the following transcript only: {transcript} Remember, use the transcript from the first message as your only source of information. It is important not to answer or provide any information that out side of transcript scope"
-        # salje se transcript samo prvi put, nakon toga bez transcripta jer se trose tokeni
-        run = client.beta.threads.runs.create(
-                thread_id=thread_id, 
-                assistant_id=assistant_id,
-#                instructions=f"Please address the user's question and provide an answer from the following transcript only: ```Grass is green, sky is blue, sun is yellow, birds fly``` Remember, use the transcript from this message as your only source of information. It is important not to answer or provide any information that out side of transcript scope"        
-                instructions=f"Please address the user's question and provide an answer from the following transcript only: '{transcript}' Remember, use the transcript from this message as your only source of information. It is important not to answer or provide any information that out side of transcript scope"
-
-                ) 
-
-
-        # Check for completion
-        while True:
-            run_status = client.beta.threads.runs.retrieve(thread_id=thread_id, run_id=run.id)
-            if run_status.status == 'completed':
-                break
-            sleep(1)
-
-        # Retrieve the assistant's response
-        messages = client.beta.threads.messages.list(thread_id=thread_id)
-        response = messages.data[0].content[0].text.value
-
-        return Response({"response": response})
+        return Response({"response": response.output_text})
     return Response({"error": "Invalid HTTP method"}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
