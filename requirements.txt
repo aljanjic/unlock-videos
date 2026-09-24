@@ -62,8 +62,8 @@ nvidia-cusparselt-cu12==0.7.1
 nvidia-nccl-cu12==2.25.1
 nvidia-nvjitlink-cu12==12.8.61
 nvidia-nvtx-cu12==12.8.55
-openai==1.64.0
-openai-whisper==20240930
+openai==1.109.1
+openai-whisper==20250625
 packageurl-python==0.16.0
 packaging==24.2
 pillow==10.4.0

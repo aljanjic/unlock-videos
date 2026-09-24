@@ -33,6 +33,9 @@ SECRET_KEY = config('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = config('DEBUG', default=False, cast=bool)
+
+# OpenAI model used for summaries and chat
+OPENAI_MODEL = config('OPENAI_MODEL', default='gpt-4o-mini')
 if not DEBUG:
     SECURE_SSL_REDIRECT = True
     SESSION_COOKIE_SECURE = True
